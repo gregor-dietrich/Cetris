@@ -15,18 +15,23 @@ auto Input::listen() -> thread
 		{
 			for (const auto& key : keys)
 				if (GetAsyncKeyState(key))
-					this->v_key = key;
+				{
+					input_queue.emplace(key);
+					sleep(200);
+				}
 		}
 	});
 }
 
 auto Input::handle() -> thread
 {
-	return thread([&]
-	{
+	return thread([&] {
 		while (!game->exit_flag)
 		{
-			switch(v_key)
+			if (input_queue.empty())
+				continue;
+
+			switch(input_queue.front())
 			{
 			case VK_ESCAPE:
 				game->exit_flag = true;
@@ -34,16 +39,20 @@ auto Input::handle() -> thread
 			case VK_UP:
 				game->active_block->rotate();
 				break;
+			case VK_DOWN:
+				game->active_block->move(0);
+				break;
+			case VK_LEFT:
+				game->active_block->move(-1);
+				break;
+			case VK_RIGHT:
+				game->active_block->move(1);
+				break;
 			default:
-				game->active_block->move(v_key);
 				break;
 			}
 
-			if (v_key == -1)
-				continue;
-			
-			v_key = -1;
-			sleep(100);
+			input_queue.pop();
 		}
 	});	
 }

@@ -31,7 +31,7 @@ namespace cetris
 		explicit Block(const shape_t&);
 		auto width() const -> hulk::u64;
 		auto height() const -> hulk::u64;
-		auto move(const hulk::i32&) -> bool;
+		auto move(const hulk::i8&) -> bool;
 		auto rotate() -> void;
 		auto display() const -> void;
 	};

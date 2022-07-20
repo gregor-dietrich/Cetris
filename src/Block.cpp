@@ -53,18 +53,18 @@ auto Block::height() const -> u64
 	return shape.size();
 }
 
-auto Block::move(const i32& direction) -> bool
+auto Block::move(const i8& direction) -> bool
 {
 	switch (direction)
 	{
-	case VK_LEFT:
+	case -1:
 		this->pos.col--;
 		break;
-	case VK_RIGHT:
-		this->pos.col++;
-		break;
-	case VK_DOWN:
+	case 0:
 		this->pos.row++;
+		break;
+	case 1:
+		this->pos.col++;
 		break;
 	default:
 		break;

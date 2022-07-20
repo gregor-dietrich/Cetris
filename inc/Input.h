@@ -1,5 +1,7 @@
 #pragma once
 
+#include <queue>
+
 #include "globals.h"
 
 namespace cetris
@@ -9,8 +11,8 @@ namespace cetris
 	struct Input final
 	{
 		Game* game = nullptr;
-		hulk::i32 v_key = -1;
 		const std::vector<hulk::i32> keys = { VK_UP, VK_DOWN, VK_LEFT, VK_RIGHT, VK_ESCAPE };
+		std::queue<hulk::i32> input_queue;
 		
 		explicit Input(Game&);
 		auto listen() -> hulk::thread;
