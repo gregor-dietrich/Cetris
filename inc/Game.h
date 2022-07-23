@@ -8,13 +8,12 @@ namespace cetris
 {	
 	struct Game final
 	{
+		std::vector<std::thread> threads;
 		bool exit_flag = false;
 		Input* input;
 		Level* level;
 		Block* active_block;
 		Block* next_block;
-		hulk::thread listen_thread;
-		hulk::thread input_thread;
 
 		Game();
 		~Game();

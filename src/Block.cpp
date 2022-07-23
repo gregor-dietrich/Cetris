@@ -1,15 +1,15 @@
+#include "Game.h"
 #include "Block.h"
 
 using namespace cetris;
 using namespace hulk;
 
-Block::Block() : Block(static_cast<shape_t>(rand_int(6)))
+Block::Block(Game& game) : Block(game, static_cast<shape_t>(rand_int(6)))
 {
 }
 
-Block::Block(const shape_t& variant):
-	color(static_cast<console::color>(rand_int(1, console::color::white))),
-	type(variant)
+Block::Block(Game& game, const shape_t& variant): game(&game), type(variant), pos({0, BUFFER_HEIGHT - 1}),
+	color(static_cast<console::color>(rand_int(1, console::color::white)))	
 {
 	switch (variant)
 	{
@@ -39,7 +39,7 @@ Block::Block(const shape_t& variant):
 	if (this->type != O)
 	{
 		for (u8 i = 0; i < rand_int(3); i++)
-			this->rotate();
+			rotate();
 	}
 }
 
@@ -58,13 +58,16 @@ auto Block::move(const i8& direction) -> bool
 	switch (direction)
 	{
 	case -1:
-		this->pos.col--;
+		if (game->active_block->pos.first > 0)
+			pos.first--;
 		break;
 	case 0:
-		this->pos.row++;
+		if (game->active_block->pos.second < LEVEL_HEIGHT)
+			pos.second++;
 		break;
 	case 1:
-		this->pos.col++;
+		if (game->active_block->pos.first + game->active_block->width() < LEVEL_WIDTH)
+			pos.first++;
 		break;
 	default:
 		break;
@@ -72,17 +75,19 @@ auto Block::move(const i8& direction) -> bool
 	return true;
 }
 
-auto Block::rotate() -> void
+auto Block::rotate(const bool& clockwise) -> void
 {
 	if (this->type == O)
 		return;
+
 	std::vector<std::vector<bool>> temp;
 	for (u64 i = 0; i < shape[0].size(); i++)
 	{
 		temp.emplace_back();
 		for (u64 j = shape.size(); j > 0; j--)
-			temp[i].push_back(shape[j - 1][i]);
+				temp[i].push_back(shape[j - 1][i]);
 	}
+
 	shape = temp;
 }
 
@@ -95,4 +100,23 @@ auto Block::display() const -> void
 			print(j ? U_SQUARE : U_EMPTY);
 		println(L"");
 	}
+}
+
+auto Block::launch() -> thread
+{
+	return thread([&] {		
+		while (pos.second < LEVEL_HEIGHT)
+		{
+			this->move();
+			sleep(TICK_RATE * 5);
+		}
+
+		game->active_block = game->next_block;
+		game->next_block = new Block(*game);
+
+		auto t = game->active_block->launch();
+		t.detach();
+
+		delete this;
+	});
 }

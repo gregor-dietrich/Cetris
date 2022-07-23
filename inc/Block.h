@@ -4,10 +4,7 @@
 
 namespace cetris
 {
-	struct Pos final {
-		hulk::i8 col = 8;
-		hulk::i8 row = -BUFFER_HEIGHT;
-	};
+	struct Game;
 
 	enum shape_t
 	{
@@ -22,17 +19,21 @@ namespace cetris
 	
 	struct Block final
 	{
-		std::vector<std::vector<bool>> shape = {};
-		hulk::console::color color;
-		const shape_t type;
-		Pos pos;
-
-		Block();
-		explicit Block(const shape_t&);
-		auto width() const -> hulk::u64;
-		auto height() const -> hulk::u64;
-		auto move(const hulk::i8&) -> bool;
-		auto rotate() -> void;
+		explicit Block(Game&);
+		Block(Game&, const shape_t&);
 		auto display() const -> void;
+
+		Game* game;
+		const shape_t type;
+		std::pair<hulk::i8, hulk::i8> pos;
+		hulk::console::color color;
+		std::vector<std::vector<bool>> shape = {};
+
+		[[nodiscard]] auto width() const -> hulk::u64;
+		[[nodiscard]] auto height() const -> hulk::u64;
+		
+		auto launch() -> hulk::thread;
+		auto move(const hulk::i8& = 0) -> bool;
+		auto rotate(const bool& = true) -> void;
 	};
 }
