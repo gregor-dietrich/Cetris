@@ -73,14 +73,23 @@ auto Block::can_move(const i8& direction) const -> bool
 	case -1:
 		if (pos.first <= 0)
 			return false;
+		for (u64 i = 0; i < height(); i++)
+			if (shape[i][0] && game->level->grid[pos.second - i][pos.first - 1])
+				return false;
 		break;
 	case 0:
 		if (pos.second >= LEVEL_HEIGHT)
 			return false;
+		for (u64 i = 0; i < width(); i++)
+			if (shape[height() - 1][i] && game->level->grid[pos.second][pos.first + i])
+				return false;
 		break;
 	case 1:
 		if (pos.first + width() >= LEVEL_WIDTH)
 			return false;
+		for (u64 i = 0; i < height(); i++)
+			if (shape[i][width() - 1] && game->level->grid[pos.second - i][pos.first + width()])
+				return false;
 		break;
 	default:
 		break;
