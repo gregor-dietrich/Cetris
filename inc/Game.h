@@ -5,21 +5,23 @@
 #include "Level.h"
 
 namespace cetris
-{	
+{
+	constexpr hulk::u64 TICK_RATE = 200;
+
 	struct Game final
 	{
-		std::vector<std::thread> threads;
-		bool exit_flag = false;
 		Input* input;
 		Level* level;
+		std::vector<std::thread> threads;
+		bool exit_flag = false;
 
 		Game();
 		~Game();
-		auto main_loop() -> void;
-
 		Game(const Game&) = delete;
 		Game(const Game&&) = delete;
 		auto operator=(const Game&) -> Game& = delete;
 		auto operator=(const Game&&) -> Game&& = delete;
+
+		auto main_loop() -> void;
 	};
 }

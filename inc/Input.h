@@ -23,6 +23,7 @@ namespace cetris
 		};
 		
 		explicit Input(Game&);
+
 		auto listen() -> hulk::thread;
 		auto handle() -> hulk::thread;
 	};	

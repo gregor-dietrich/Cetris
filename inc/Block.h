@@ -20,21 +20,23 @@ namespace cetris
 	
 	struct Block final
 	{
-		explicit Block(Game&);
-		Block(Game&, const shape_t&);
-		auto display() const -> void;
-
 		Game* game;
-		const shape_t type;
+		std::vector<std::vector<bool>> shape = {};
 		std::pair<hulk::i8, hulk::i8> pos;
 		hulk::console::color color;
-		std::vector<std::vector<bool>> shape = {};
+		const shape_t type;
+
+		explicit Block(Game&);
+		Block(Game&, const shape_t&);
 
 		[[nodiscard]] auto width() const -> hulk::u64;
 		[[nodiscard]] auto height() const -> hulk::u64;
-		
-		auto launch() -> hulk::thread;
-		auto move(const hulk::i8& = 0) -> bool;
+
+		[[nodiscard]] auto can_move(const hulk::i8& = 0) const -> bool;
+		auto move(const hulk::i8& = 0) -> void;
 		auto rotate(const bool& = true) -> void;
+		
+		auto display() const -> void;
+		auto launch() -> hulk::thread;
 	};
 }

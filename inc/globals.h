@@ -4,11 +4,6 @@
 
 namespace cetris
 {
-	constexpr hulk::u8 LEVEL_WIDTH = 10;
-	constexpr hulk::u8 LEVEL_HEIGHT = 20;
-	constexpr hulk::u8 BUFFER_HEIGHT = 4;
-	constexpr hulk::u64 TICK_RATE = 200;
-
 	const hulk::wstr U_SQUARE = L"\u25a0";
 	const hulk::wstr U_EMPTY = L" ";
 	const hulk::wstr U_HORIZONTAL = L"\u2550";

@@ -4,12 +4,12 @@
 using namespace cetris;
 using namespace hulk;
 
-Block::Block(Game& game) : Block(game, static_cast<shape_t>(rand_int(6)))
+Block::Block(Game& game) : Block(game, static_cast<shape_t>(rand_int(Z)))
 {
 }
 
-Block::Block(Game& game, const shape_t& type): game(&game), type(type), pos({0, BUFFER_HEIGHT - 1}),
-	color(static_cast<console::color>(rand_int(1, console::color::white)))	
+Block::Block(Game& game, const shape_t& type): game(&game),
+	color(static_cast<console::color>(rand_int(1, console::color::white))), type(type)
 {
 	switch (type)
 	{
@@ -35,12 +35,14 @@ Block::Block(Game& game, const shape_t& type): game(&game), type(type), pos({0, 
 		shape = {{true, true, false}, {false, true, true}};
 		break;
 	}
-
+	
 	if (type != O)
 	{
 		for (u8 i = 0; i < rand_int(3); i++)
 			rotate();
 	}
+
+	pos = {(LEVEL_WIDTH - width()) / 2, BUFFER_HEIGHT - 1};
 }
 
 auto Block::display() const -> void
@@ -64,26 +66,47 @@ auto Block::height() const -> u64
 	return shape.size();
 }
 
-auto Block::move(const i8& direction) -> bool
+auto Block::can_move(const i8& direction) const -> bool
 {
 	switch (direction)
 	{
 	case -1:
-		if (pos.first > 0)
-			pos.first--;
+		if (pos.first <= 0)
+			return false;
 		break;
 	case 0:
-		if (pos.second < LEVEL_HEIGHT)
-			pos.second++;
+		if (pos.second >= LEVEL_HEIGHT)
+			return false;
 		break;
 	case 1:
-		if (pos.first + width() < LEVEL_WIDTH)
-			pos.first++;
+		if (pos.first + width() >= LEVEL_WIDTH)
+			return false;
 		break;
 	default:
 		break;
 	}
 	return true;
+}
+
+auto Block::move(const i8& direction) -> void
+{
+	if (!can_move(direction))
+		return;
+
+	switch (direction)
+	{
+	case -1:
+		pos.first--;
+		break;
+	case 0:
+		pos.second++;
+		break;
+	case 1:
+		pos.first++;
+		break;
+	default:
+		break;
+	}
 }
 
 auto Block::rotate(const bool& clockwise) -> void
@@ -95,7 +118,7 @@ auto Block::rotate(const bool& clockwise) -> void
 	{
 		temp.emplace_back();
 		for (u64 j = shape.size(); j > 0; j--)
-			temp[i].push_back(shape[j - 1][i]);
+			temp[i].emplace_back(shape[j - 1][i]);
 	}
 	shape = temp;
 }
@@ -103,11 +126,11 @@ auto Block::rotate(const bool& clockwise) -> void
 auto Block::launch() -> thread
 {
 	return thread([&] {		
-		while (!game->exit_flag && pos.second < LEVEL_HEIGHT)
+		while (!game->exit_flag && can_move())
 		{
 			move();
 			sleep(TICK_RATE * 5);
-		}		
+		}
 		game->level->lock_block();
 		delete this;
 	});

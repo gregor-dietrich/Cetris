@@ -18,13 +18,15 @@ Level::~Level()
 
 auto Level::lock_block() -> void
 {
+	const auto h = active_block->height();
+	const auto w = active_block->width();
 	const auto x = active_block->pos.first;
 	const auto y = active_block->pos.second;
 
-	for (u64 i = 0; i < active_block->height(); i++)
-		for (u64 j = 0; j < active_block->width(); j++)
+	for (u64 i = 0; i < h; i++)
+		for (u64 j = 0; j < w; j++)
 			if (active_block->shape[i][j])
-				grid[i + y - active_block->height()][j + x] = active_block->color;
+				grid[i + y - h][j + x] = active_block->color;
 
 	active_block = next_block;
 	next_block = new Block(*game);
