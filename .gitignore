@@ -7,8 +7,5 @@ x64
 *.bak
 *.code-workspace
 *.DotSettings
-*.filters
 *.pdb
-*.sln
 *.user
-*.vcxproj
