@@ -12,8 +12,6 @@ namespace cetris
 		bool exit_flag = false;
 		Input* input;
 		Level* level;
-		Block* active_block;
-		Block* next_block;
 
 		Game();
 		~Game();

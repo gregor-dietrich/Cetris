@@ -5,6 +5,7 @@
 namespace cetris
 {
 	struct Game;
+	struct Level;
 
 	enum shape_t
 	{
