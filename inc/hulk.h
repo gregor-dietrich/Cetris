@@ -58,7 +58,7 @@ namespace hulk
 	{
 		if (!internal::RAND_GENERATOR)
 			internal::RAND_GENERATOR = new std::mt19937(std::random_device{}());
-		const std::uniform_int_distribution<i32> distribution(min, max);
+		std::uniform_int_distribution<i32> distribution(min, max);
 	    return distribution(*internal::RAND_GENERATOR);
 	}
 	inline auto rand_int(const i32& max) -> i32
